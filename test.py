@@ -7,16 +7,35 @@ vm = VehicleManagement()
 v1 = vm.create_vehicle({"manufacturer": "Tesla", "vehicleId": "T100", "registrationstatus": "active", "fleetid": 1, "owner": "Elon"})
 v2 = vm.create_vehicle({"manufacturer": "Ford", "vehicleId": "F200", "registrationstatus": "active", "fleetid": 1, "owner": "Henry"})
 
-# Vehicle 1 status (recent, active)
+
 vm.create_vehicle_status({
-    "vehicleId": v1["id"],
-    "latitude": 12.34,
+    "vehicleId": v1["id"],"latitude": 12.34,
     "longitude": 56.78,
     "speed": 110,
     "fuelLevel": 50,
     "status": "active"
 })
+vm.create_vehicle_status({
+    "vehicleId": v1["id"],"latitude": 12.34,
+    "longitude": 56.78,
+    "speed": 120,
+    "fuelLevel": 50,
+    "status": "active"
+})
+vm.create_vehicle_status({
+    "vehicleId": v1["id"],"latitude": 12.34,
+    "longitude": 56.78,
+    "speed": 80,
+    "fuelLevel": 50,
+    "status": "active"
+})
+vm.create_vehicle_status({
+    "vehicleId": v1["id"],"latitude": 12.34,
+    "longitude": 56.78,
+    "speed": 101,
+    "fuelLevel": 50,
+    "status": "active"
+})
+print(vm.get_fleet_analytics())
 
-print(vm.get_vehicles())
-print(vm.get_vehicle_statuses())
 

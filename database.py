@@ -1,6 +1,6 @@
 # CONVERTED TO MONGODB(LOCAL) FROM PYTHON DICTIONAREIS
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -83,3 +83,11 @@ class VehicleManagement:
     def resolve_alert(self, alert_id: str) -> bool:
         result = self.alerts.update_one({"_id": ObjectId(alert_id)}, {"$set": {"resolved": True}})
         return result.modified_count > 0
+    def get_alerts(self) -> List[dict]:
+        return [self._format_id(a) for a in self.alerts.find()]
+
+    def get_vehicle_alerts(self, vehicle_id: str) -> List[dict]:
+        return [self._format_id(a) for a in self.alerts.find({"vehicleId": vehicle_id})]
+
+    def get_vehicle_statuses(self) -> List[dict]:
+        return [self._format_id(s) for s in self.vehicle_statuses.find()]

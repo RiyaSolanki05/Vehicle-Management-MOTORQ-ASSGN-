@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime,timedelta
 
 class VehicleManagement:
     def __init__(self):
@@ -41,17 +41,26 @@ class VehicleManagement:
         self.vehicle_statuses[self.status_id_counter] = status_data
         self.status_id_counter += 1
 
-        existing_alerts = self.get_vehicle_alerts(status_data['vehicleId'])
-        unresolved_types = {alert['type'] for alert in existing_alerts if not alert.get('resolved', False)}
+        existing = self.get_vehicle_alerts(status_data['vehicleId'])
+        unresolved = [a for a in existing if not a.get('resolved')]
+        unresolved_types = {a['type'] for a in existing if not a.get('resolved')}
 
-        if status_data.get('speed', 0) > 100 and "SpeedViolation" not in unresolved_types:
-            self._create_alert(status_data['vehicleId'], "SpeedViolation",
+        if status_data.get('speed', 0) > 100:
+            if "SpeedViolation" not in unresolved_types:
+              self._create_alert(status_data['vehicleId'], "SpeedViolation",
                 f"Speed exceeded: {status_data['speed']} km/h")
-
-        if status_data.get('fuelLevel', 100) < 15 and "LowFuel" not in unresolved_types:
-            self._create_alert(status_data['vehicleId'], "LowFuel",
+        else:
+            for a in unresolved:
+                if a['type'] == "SpeedViolation":
+                    self.resolve_alert(a['id'])
+        if status_data.get('fuelLevel', 100) < 15:
+            if "LowFuel" not in unresolved_types:
+              self._create_alert(status_data['vehicleId'], "LowFuel",
                 f"Low fuel level: {status_data['fuelLevel']}%")
-            
+        else:
+            for a in unresolved:
+                if a['type'] == "LowFuel":
+                    self.resolve_alert(a['id'])
         return status_data 
     
 
@@ -66,11 +75,13 @@ class VehicleManagement:
             }
         self.alerts[self.alert_id_counter] = alert
         self.alert_id_counter += 1
+        print(f"[ALERT] {alert_type} for Vehicle {vehicle_id}: {message}")
 
     def resolve_alert(self, alert_id: int) -> bool:
         alert = self.alerts.get(alert_id)
         if alert:
             alert['resolved'] = True
+            print("resolved alert")
             return True
         return False
 
@@ -81,8 +92,7 @@ class VehicleManagement:
         return [alert for alert in self.alerts.values() if alert['vehicleId'] == vehicle_id]
     def get_fleet_analytics(self) -> dict:
         now = datetime.now()
-        cutoff = now - datetime.time(hours=24)
-
+        cutoff = now - timedelta(hours=24)
         active, inactive = 0, 0
         fuel_levels = []
         total_distance = 0.0
