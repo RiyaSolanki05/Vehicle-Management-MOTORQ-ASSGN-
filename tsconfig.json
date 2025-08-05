@@ -1,0 +1,6 @@
+{
+    "include": ["schema/*"],
+    "compilerOptions": {
+        "paths": {"@shared/*":["./shared/*"]}
+    }
+}
