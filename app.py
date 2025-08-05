@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
+from storage import VehicleManagement
 
+storage = VehicleManagement() 
 app = Flask(__name__)
 
 @app.route('/api/vehicles', methods=['GET'])
@@ -37,7 +39,7 @@ def create_new_vehicle():
     return jsonify(vehicle), 201
 @app.route('/api/vehicles/<int:id>', methods=['DELETE'])
 def delete_existing_vehicle(id):
-    deleteVehicle(id)
+    storage.deleteVehicle(id)
     return jsonify({"message": "Vehicle deleted"})
 
 
