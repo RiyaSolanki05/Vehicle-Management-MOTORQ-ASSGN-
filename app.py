@@ -41,5 +41,19 @@ def create_new_vehicle():
 def delete_existing_vehicle(id):
     storage.deleteVehicle(id)
     return jsonify({"message": "Vehicle deleted"})
+@app.route('/api/vehicles', methods=['GET'])
+def list_alerts():
+    try:
+        return jsonify(storage.get_alerts())
+    except Exception as e:
+        return jsonify({"message": "Failed to get alerts"}), 500
+
+@app.route('/api/vehicles', method=['GET'])
+def get_analtics():
+    try:
+        return jsonify(storage.get_alerts())
+    except Exception as e:
+        return jsonify({"message": "Failed to get Analytics Report"}), 500
+
 
 
