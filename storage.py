@@ -51,9 +51,9 @@ class VehicleManagement:
         if status_data.get('fuelLevel', 100) < 15 and "LowFuel" not in unresolved_types:
             self._create_alert(status_data['vehicleId'], "LowFuel",
                 f"Low fuel level: {status_data['fuelLevel']}%")
-
-
-        return status_data
+            
+        return status_data 
+    
 
     def _create_alert(self, vehicle_id: int, alert_type: str, message: str):
         alert = {
