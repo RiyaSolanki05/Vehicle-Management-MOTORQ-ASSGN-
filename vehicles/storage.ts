@@ -1,7 +1,9 @@
 import { 
   Vehicle, InsertVehicle, 
   VehicleStatus, InsertVehicleStatus,
-} from "./schema/data";
+  alerts,
+  Alert,
+} from "../schema/data";
 
 
 export interface IStorage {
@@ -20,11 +22,15 @@ export class VehicleManagement implements IStorage{
   private vehicleStatuses: Map<number, VehicleStatus>;
   private vehicleCurrentId: number;
   private vehicleStatusCurrentId: number;
+  private alerts: Map<number, any> = new Map(); // new
+  private alertCurrentId = 1;
 
   constructor(){
     this.vehicles = new Map();
     this.vehicleStatuses = new Map();
     this.vehicleCurrentId = 1;
+    this.alerts = new Map();
+    this.alertCurrentId = 1;
   }
   
   async getVehicles(): Promise<Vehicle[]> {
@@ -55,6 +61,31 @@ export class VehicleManagement implements IStorage{
     const timestamp=new Date();
     const status:VehicleStatus={insertStatus,id,timestamp};
     this.vehicleStatuses.set(id,status);
+
+  if (insertStatus.speed> 100) {
+    alerts.push({
+      vehicleId: insertStatus.vehicleId,
+      type: "SpeedViolation",
+      message: `Speed exceeded: ${insertStatus.speed} km/h`
+    });
   }
-  
+
+  if (insertStatus.fuelLevel < 15) {
+    alerts.push({
+      vehicleId: insertStatus.vehicleId,
+      type: "LowFuel",
+      message: `Low fuel level: ${insertStatus.fuelLevel}%`
+    });
+  }
+  return status;
+
+}
+  async getAlerts(): Promise<Alert> {
+    return Array.from(this.alerts.values());
+  }
+  async getVehicleAlerts(vehicleId: number): Promise<Alert[]> {
+    return Array.from(this.alerts.values()).filter(
+      (alert) => alert.vehicleId === vehicleId,
+    );
+  }
 }

@@ -42,8 +42,21 @@ export const insertVehicleStatusSchema = createInsertSchema(vehicleStatus).pick(
   diagnosticCodes: true,
   timestamp: true
 });
+export const alerts = pgTable("alerts", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(), 
+  message: text("message").notNull();
+})
+
+export const insertAlertSchema = createInsertSchema(alerts).pick({
+  type: true,
+  message: true
+})
 export type InsertVehicle = z.infer<typeof insertVehicleSchema>;
 export type Vehicle = typeof vehicles.$inferSelect;
 
 export type InsertVehicleStatus = z.infer<typeof insertVehicleStatusSchema>;
 export type VehicleStatus = typeof vehicleStatus.$inferSelect;
+
+export type InsertAlert = z.infer<typeof insertAlertSchema>;
+export type Alert = typeof alerts.$inferSelect;
